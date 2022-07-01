@@ -1,6 +1,6 @@
 namespace: packettoobig
 name: peering
-version: 1.0.1
+version: 1.0.2
 readme: README.md
 authors:
     - Eliott T  <contact@packettoobig.net>
