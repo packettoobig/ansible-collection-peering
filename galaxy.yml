@@ -1,0 +1,25 @@
+namespace: packettoobig
+name: peering
+version: 1.0.0
+readme: README.md
+authors:
+    - Eliott T  <contact@packettoobig.net>
+
+description: "Modules for information grabbing and BGP peering configuration"
+
+license:
+    - "MIT"
+
+tags:
+    - bgp
+    - peeringdb
+    - bgpq3
+    - bgpq4
+    - networking
+    - netops
+
+repository: https://github.com/packettoobig/ansible-collection-peering
+documentation: https://github.com/packettoobig/ansible-collection-peering/blob/master/README.md
+homepage: https://github.com/packettoobig/ansible-collection-peering
+issues: https://github.com/packettoobig/ansible-collection-peering/issues
+
