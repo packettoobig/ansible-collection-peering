@@ -61,9 +61,12 @@ object:
 
 # Implement retries and backoff because of the peeringdb ratelimiting
 # Documentation here : https://urllib3.readthedocs.io/en/stable/reference/urllib3.util.html
-retry_strategy = urllib3.util.Retry(
-    total=10, # Default 10
-    backoff_factor=0.1, # Default 0
+class CustomRetry(urllib3.util.Retry) :
+    DEFAULT_MAX_BACKOFF=30 # Default 120
+
+retry_strategy = CustomRetry(
+    total=100, # Default 10
+    backoff_factor=0.05, # Default 0
     allowed_methods=["HEAD", "GET", "OPTIONS"],
     status_forcelist=[413, 429, 500, 502, 503, 504]
 )
