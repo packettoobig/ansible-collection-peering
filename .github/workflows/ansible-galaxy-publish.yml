@@ -18,6 +18,6 @@ jobs:
           fetch-depth: 0
 
       - name: "Publish Collection to Galaxy-NG"
-        uses: ansible/ansible-publish-action@v1
+        uses: ansible/ansible-publish-action@main
         with:
           api_key: "${{ secrets.GALAXY_API_KEY }}"
