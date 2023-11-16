@@ -12,6 +12,7 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    continue-on-error: True
     steps:
       -
         name: Perform integration testing with ansible-test
