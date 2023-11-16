@@ -1,4 +1,14 @@
-# Todo
 # https://github.com/ansible/ansible-publish-action
+name: Publish to ansible galaxy with ansible-publish-action
 on:
-  delete
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  ansible_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo and finish
+        run: echo "End of run"
+  
