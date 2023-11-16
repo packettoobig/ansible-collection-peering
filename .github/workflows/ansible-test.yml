@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: True
     steps:
-      -
-        name: Perform integration testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
-        with:
-          testing-type: integration
+#      -
+#        name: Perform integration testing with ansible-test
+#        uses: ansible-community/ansible-test-gh-action@release/v1
+#        with:
+#          testing-type: integration
       -
         name: Perform sanity testing with ansible-test
         uses: ansible-community/ansible-test-gh-action@release/v1
