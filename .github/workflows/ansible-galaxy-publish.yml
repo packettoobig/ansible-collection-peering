@@ -1,4 +1,6 @@
 # https://github.com/ansible/ansible-publish-action
+# Usage: https://github.com/ansible/ansible-publish-action/pull/5/files
+
 name: Publish to ansible galaxy with ansible-publish-action
 on:
   push:
@@ -9,6 +11,13 @@ jobs:
   ansible_publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Echo and finish
-        run: echo "End of run"
-  
+      - name: 'Checkout git repo'
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: "Publish Collection to Galaxy-NG"
+        uses: ansible/ansible-publish-action@v1
+        with:
+          api_key: "${{ secrets.GALAXY_API_KEY }}"
