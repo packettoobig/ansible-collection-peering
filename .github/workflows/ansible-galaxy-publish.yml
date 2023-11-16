@@ -21,5 +21,3 @@ jobs:
         uses: ansible/ansible-publish-action@main
         with:
           api_key: "${{ secrets.GALAXY_API_KEY }}"
-          api_server: 'https://old-galaxy.ansible.com/'
-          src_path: '.'
