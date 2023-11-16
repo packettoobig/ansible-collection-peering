@@ -10,7 +10,7 @@ on:
 
 jobs:
   ansible_tests:
-    runs-on: docker
+    runs-on: ubuntu-latest
     steps:
       # https://github.com/ansible-community/ansible-test-gh-action
     - name: Perform sanity testing with ansible-test
