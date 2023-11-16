@@ -1,2 +1,4 @@
 # Todo
 # https://github.com/ansible/ansible-publish-action
+on:
+  delete
