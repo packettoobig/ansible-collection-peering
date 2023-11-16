@@ -8,24 +8,20 @@ on:
     branches:
       - 'master'
 
-# https://github.com/ansible-community/ansible-test-gh-action
 jobs:
-  docker:
-    runs-on: ubuntu-latest
-    continue-on-error: True
+  ansible_tests:
+    runs-on: docker
     steps:
-#      -
-#        name: Perform integration testing with ansible-test
-#        uses: ansible-community/ansible-test-gh-action@release/v1
-#        with:
-#          testing-type: integration
-      -
-        name: Perform sanity testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
-        with:
-          testing-type: sanity
-      -
-        name: Perform unit testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
-        with:
-          testing-type: unit
+      # https://github.com/ansible-community/ansible-test-gh-action
+    - name: Perform sanity testing with ansible-test
+      uses: ansible-community/ansible-test-gh-action@release/v1
+      with:
+        testing-type: integration
+    - name: Perform sanity testing with ansible-test
+      uses: ansible-community/ansible-test-gh-action@release/v1
+      with:
+        testing-type: sanity
+    - name: Perform unit testing with ansible-test
+      uses: ansible-community/ansible-test-gh-action@release/v1
+      with:
+        testing-type: unit
