@@ -21,7 +21,7 @@ short_description: Searches for ASN policies and interfaces
 version_added: "2.0.0"
 
 description:
-    - "This modules encapsules peeringDB API to search for an specific ASN interfaces and policy information"
+    - "This modules encapsules peeringDB API to search for specific ASN interfaces and policy information"
 
 options:
     asn_list:
@@ -38,7 +38,7 @@ options:
         required: false
     ix_name:
         description:
-          - "The peerigDB IXP Name"
+          - "The peeringDB IXP Name"
         required: false
 '''
 
@@ -91,14 +91,17 @@ def getASNData(asn_list, api_key=None):
     return data_objects
 
 def parseSingularASNData(asn, data, ixId=None, ixName=None):
-    netfields = ["name",
-              "info_prefixes4",
-              "info_prefixes6",
-              "poc_set",
-              "info_unicast",
-              "info_ipv6"]
+    netfields = [
+                "name",
+                "info_prefixes4",
+                "info_prefixes6",
+                "poc_set",
+                "info_unicast",
+                "info_ipv6"
+                ]
 
-    ixfields = ["name",
+    ixfields = [
+                "name",
                 "ix_id",
                 "ipaddr4",
                 "ipaddr6",
