@@ -33,6 +33,10 @@ options:
             - "If true aggregate the prefix"
         required: false
         default: True
+    max_depth:
+        description:
+            - Max bgpq3/4 recursion depth (bgpq3/4 "-L" option)
+            - Unlimited by default
     limit_length:
         description:
             - "If true, limit IPv4 length to 24 and IPv6 length to 48"
@@ -78,6 +82,8 @@ def bgpq4Query(module, path):
     args = module.params["IPv"]
     if module.params["aggregate"]:
         args = args + "A"
+    if module.params["max_depth"]:
+        args = "%s -L %s" % (args, str(module.params["max_depth"]))
     if module.params["irrd_host"]:
         args = "%s -h %s" % (args, module.params["irrd_host"])
     if module.params["sources"]:
@@ -116,13 +122,14 @@ def main():
 
     fields = {
 
-        "IPv":          {"required": True, "type": "str", "choices": ['4', '6']},
-        "aggregate":    {"default": True, "type": "bool"},
-        "limit_length":    {"default": True, "type": "bool"},
-        "ASN":        {"required": True, "type": "str"},
-        "AS_SET":        {"required": False, "type": "str"},
-        "irrd_host":         {"default": 'rr.ntt.net', "required": False, "type": "str"},
-        "sources":         {"default": "RPKI,RIPE,APNIC,ARIN,RADB", "required": False, "type": "str"}
+        "IPv":                  {"required": True, "type": "str", "choices": ['4', '6']},
+        "aggregate":            {"default": True, "type": "bool"},
+        "max_depth":            {"required": False, "type": "str"},
+        "limit_length":         {"default": True, "type": "int"},
+        "ASN":                  {"required": True, "type": "str"},
+        "AS_SET":               {"required": False, "type": "str"},
+        "irrd_host":            {"default": 'rr.ntt.net', "required": False, "type": "str"},
+        "sources":              {"default": "RPKI,RIPE,APNIC,ARIN,RADB", "required": False, "type": "str"}
 
     }
     module = AnsibleModule(argument_spec=fields)
