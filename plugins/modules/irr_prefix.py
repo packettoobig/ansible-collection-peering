@@ -22,7 +22,7 @@ short_description: Generates IRR prefix-list
 version_added: "0.0.1"
 
 description:
-    - "This modules runs bgpq3/4 to generate model based prefix-list"
+    - "This modules runs bgpq4 to generate model based prefix-list"
 
 options:
     IPv:
@@ -37,7 +37,7 @@ options:
         default: True
     max_depth:
         description:
-            - Max bgpq3/4 recursion depth (bgpq3/4 "-L" option)
+            - Max bgpq4 recursion depth (bgpq4 "-L" option)
             - Unlimited by default
     limit_length:
         description:
@@ -54,7 +54,7 @@ options:
         required: false
     irrd_host:
         description:
-            - "host running IRRD software, bgpq3 default is whois.radb.net, bgpq4 default is rr.ntt.net"
+            - "host running IRRD software, bgpq4 default is rr.ntt.net"
         required: false
         default: rr.ntt.net
     sources:
@@ -62,8 +62,14 @@ options:
             - "Data sources"
         required: false
         default: "RPKI,RIPE,APNIC,ARIN,RADB"
+    allow_priv_asn:
+        description:
+            - "Do not error-out if there is a private or martian ASN in the AS-SET"
+            - "This is the equivalent of bgpq4 -p option (introduced in 1.15)"
+        required: false
+        default: True
 requirements:
-    - bgpq4 (or bgpq3)
+    - bgpq4 >= 1.15
 '''
 
 EXAMPLES = '''
@@ -84,6 +90,8 @@ def bgpq4Query(module, path):
     args = module.params["IPv"]
     if module.params["aggregate"]:
         args = args + "A"
+    if module.params["allow_priv_asn"]:
+        args = args + "p"
     if module.params["max_depth"]:
         args = "%s -L %s" % (args, str(module.params["max_depth"]))
     if module.params["irrd_host"]:
@@ -131,15 +139,16 @@ def main():
         "ASN":                  {"required": True, "type": "str"},
         "AS_SET":               {"required": False, "type": "str"},
         "irrd_host":            {"default": 'rr.ntt.net', "required": False, "type": "str"},
-        "sources":              {"default": "RPKI,RIPE,APNIC,ARIN,RADB", "required": False, "type": "str"}
+        "sources":              {"default": "RPKI,RIPE,APNIC,ARIN,RADB", "required": False, "type": "str"},
+        "allow_priv_asn":       {"default": True, "type": "bool"}
 
     }
     module = AnsibleModule(argument_spec=fields)
     result = dict(changed=False, warnings=list())
     try:
-        path = module.get_bin_path('bgpq4', False) or module.get_bin_path('bgpq3', False)
+        path = module.get_bin_path('bgpq4', False)
         if path is None:
-            raise AnsibleError("bgpq4 and bgpq3 not found")
+            raise AnsibleError("bgpq4 not found")
         response = bgpq4Query(module, path)
         result.update(changed=True, message=response)
     except Exception as e:
