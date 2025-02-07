@@ -69,7 +69,7 @@ options:
         required: false
         default: True
 requirements:
-    - bgpq4 >= 1.15
+    - bgpq4 >= 1.8
 '''
 
 EXAMPLES = '''
