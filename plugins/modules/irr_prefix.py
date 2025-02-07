@@ -1,4 +1,6 @@
-#! /usr/bin/env python3
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
 #  Heavily inspired from https://github.com/renatoalmeidaoliveira/netero/tree/master/plugins/modules/irr_prefix.py
 #  Modified quite a lot
 #  Huge thanks to Renato Almeida de Oliveira for the base

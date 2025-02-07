@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 #  Heavily inspired from https://github.com/renatoalmeidaoliveira/netero/tree/master/plugins/modules/peeringdb_getasn.py
