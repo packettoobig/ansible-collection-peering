@@ -67,7 +67,7 @@ options:
             - "Do not error-out if there is a private or martian ASN in the AS-SET"
             - "This is the equivalent of bgpq4 -p option (introduced in 1.15)"
         required: false
-        default: True
+        default: False
 requirements:
     - bgpq4 >= 1.8
 '''
@@ -109,9 +109,36 @@ def bgpq4Query(module, path):
             args = args + " -m 48"
     cmd = "%s -j%s -l irr_prefix %s" % (path, args, IRR_OBJECT)
     rc, stdout, stderr = module.run_command(cmd)
+
+    # Error handling for bgpq4 command
+    if rc != 0:
+            raise AnsibleError("bgpq4 command failed with exit code %s. Command used: %s. The error is: %s" % (rc, cmd, to_native(stderr)))
+    if not stdout:
+        raise AnsibleError("bgpq4 returned an empty output. Command used: %s" % cmd)
+    # Trigger only a warning if bgpq4 return code is zero but stderr exists
     if stderr != "":
-        raise AnsibleError(" bgpq4 error: %s " % to_native(stderr))
-    data = json.loads(stdout)
+        # Special warning for invalid AS number in AS-SET (see related allow_priv_asn option)
+        stderr_lines=(to_native(stderr).splitlines())
+        if stderr_lines and all("Invalid AS number" in line for line in stderr_lines):
+            module.warn("bgpq4 encountered one or more invalid AS in %s AS-SET." % module.params["ASN"])
+        # Generic warning
+        else:
+            module.warn("bgpq4 warning: %s" % to_native(stderr))
+
+    try:
+        data = json.loads(stdout)
+    # Error handling for JSON data decode with multiple verbosities
+    except json.JSONDecodeError as e:
+        if module._verbosity >= 1:
+            raise AnsibleError("Failed to parse JSON output from bgpq4: %s. Output: %s" % (to_native(e), stdout))
+        else:
+            raise AnsibleError("Failed to parse JSON output from bgpq4")
+    if "irr_prefix" not in data:
+        if module._verbosity >= 1:
+            raise AnsibleError("JSON output did not contain expected 'irr_prefix' key. Output: %s" % stdout)
+        else:
+            raise AnsibleError("JSON output did not contain expected 'irr_prefix' key.")
+
     fields = ['prefix', 'exact', 'less-equal', 'greater-equal']
     output = {"irrPrefix": []}
     for prefixData in data["irr_prefix"]:
@@ -135,24 +162,22 @@ def main():
         "IPv":                  {"required": True, "type": "str", "choices": ['4', '6']},
         "aggregate":            {"default": True, "type": "bool"},
         "max_depth":            {"required": False, "type": "str"},
-        "limit_length":         {"default": True, "type": "int"},
+        "limit_length":         {"default": True, "type": "bool"},
         "ASN":                  {"required": True, "type": "str"},
         "AS_SET":               {"required": False, "type": "str"},
         "irrd_host":            {"default": 'rr.ntt.net', "required": False, "type": "str"},
         "sources":              {"default": "RPKI,RIPE,APNIC,ARIN,RADB", "required": False, "type": "str"},
-        "allow_priv_asn":       {"default": True, "type": "bool"}
+        "allow_priv_asn":       {"default": False, "type": "bool"}
 
     }
     module = AnsibleModule(argument_spec=fields)
     result = dict(changed=False, warnings=list())
     try:
-        path = module.get_bin_path('bgpq4', False)
-        if path is None:
-            raise AnsibleError("bgpq4 not found")
+        path = module.get_bin_path('bgpq4', required=True)
         response = bgpq4Query(module, path)
         result.update(changed=True, message=response)
     except Exception as e:
-        module.fail_json(msg=to_native(e))
+        module.fail_json(msg="Error: %s" % to_native(e))
     module.exit_json(**result)
 
 
